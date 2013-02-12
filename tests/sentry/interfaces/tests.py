@@ -125,16 +125,8 @@ class StacktraceTest(InterfaceBase):
 
     def test_serialize_behavior(self):
         assert self.interface.serialize() == {
-            'frames': self.interface.frames
+            'frames': [vars(f) for f in self.interface.frames]
         }
-
-    @mock.patch('sentry.interfaces.Stacktrace.get_frame_hash')
-    def test_get_hash_uses_frame_hash(self, get_frame_hash):
-        get_frame_hash.side_effect = lambda x: [x]
-        assert self.interface.get_hash() == self.interface.frames
-        assert get_frame_hash.call_count == 2
-        get_frame_hash.assert_any_call(self.interface.frames[0])
-        get_frame_hash.assert_any_call(self.interface.frames[1])
 
     @mock.patch('sentry.interfaces.Stacktrace.get_stacktrace')
     def test_to_string_returns_stacktrace(self, get_stacktrace):
